@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de Sensi FF</title>
+<style>
+body{margin:0;font-family:Arial;background:#050505;color:#fff}
+.screen{min-height:100vh;display:flex;justify-content:center;align-items:center}
+.card{width:95%;max-width:420px;background:#0f0f0f;padding:20px;border-radius:16px}
+h2{text-align:center}
+input,select,button{width:100%;padding:12px;margin-top:8px;border:none;border-radius:8px;font-size:14px}
+input,select{background:#1a1a1a;color:#fff}
+button{background:#ff2b2b;color:#fff;font-weight:bold}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.hidden{display:none}
+.box{background:#111;padding:10px;border-radius:10px;margin-top:10px}
+#resultado{background:#090909;padding:12px;border-radius:10px;margin-top:10px;font-size:14px}
+.tabbar{display:flex;gap:6px;margin-bottom:10px}
+.tab{flex:1;text-align:center;padding:8px;border-radius:8px;background:#1a1a1a}
+.tab.active{background:#ff2b2b}
+</style>
+</head>
+<body><!-- LOGIN --><div id="login" class="screen">
+ <div class="card">
+  <h2>Login</h2>
+  <input type="password" id="passLogin" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
+ </div>
+</div><!-- APP --><div id="app" class="screen hidden">
+ <div class="card">
+  <h2>Gerador de Sensibilidade</h2>  <div class="tabbar">
+    <div class="tab active" onclick="tab('gerador')">Gerador</div>
+    <div class="tab" onclick="tab('vip')">VIP</div>
+  </div>  <!-- GERADOR -->  <div id="gerador" class="panel">
+   <div class="box"><select id="sistema">
+  <option value="android">Android</option>
+  <option value="ios">iOS</option>
+  <option value="emulador">Emulador</option>
+  <option value="mobilador">Mobilador</option>
+</select>
+
+<select id="celular">
+  <option value="fraco">Celular fraco</option>
+  <option value="medio">Celular médio</option>
+  <option value="forte">Celular forte</option>
+</select>
+
+<select id="modo">
+  <option value="hs">Full HS</option>
+  <option value="balance">Balanceado</option>
+  <option value="safe">Seguro</option>
+  <option value="rush">Rush</option>
+  <option value="precisao">Precisão</option>
+</select>
+
+<select id="nivel">
+  <option value="baixa">Sensi Baixa</option>
+  <option value="media">Sensi Média</option>
+  <option value="alta">Sensi Alta</option>
+</select>
+
+<select id="botao">
+  <option value="pequeno">Botão Pequeno (10–40)</option>
+  <option value="medio">Botão Médio (40–60)</option>
+  <option value="grande">Botão Grande (55–65)</option>
+</select>
+
+<button onclick="gerar()">Gerar Sensibilidade</button>
+
+   </div>
+  </div>  <!-- VIP -->  <div id="vip" class="panel hidden">
+   <div class="box">
+    <input type="password" id="passVip" placeholder="Senha VIP">
+    <button onclick="vip()">Ativar VIP</button>
+   </div>
+  </div>  <div id="resultado"></div> </div>
+</div><script>
+function r(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+
+function login(){
+ const p=document.getElementById('passLogin').value.trim();
+ if(p==='999'){
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+ }else{alert('Senha incorreta');}
+}
+
+function tab(t){
+ document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+ document.querySelectorAll('.panel').forEach(e=>e.classList.add('hidden'));
+ if(t==='gerador'){
+  document.querySelectorAll('.tab')[0].classList.add('active');
+  document.getElementById('gerador').classList.remove('hidden');
+ }
+ if(t==='vip'){
+  document.querySelectorAll('.tab')[1].classList.add('active');
+  document.getElementById('vip').classList.remove('hidden');
+ }
+}
+
+function gerar(){
+ const sistema=document.getElementById('sistema').value;
+ const celular=document.getElementById('celular').value;
+ const modo=document.getElementById('modo').value;
+ const nivel=document.getElementById('nivel').value;
+ const botao=document.getElementById('botao').value;
+
+ let base=150;
+
+ if(sistema==='ios') base+=5;
+ if(sistema==='emulador') base+=10;
+ if(celular==='fraco') base-=8;
+ if(celular==='forte') base+=8;
+ if(nivel==='baixa') base-=15;
+ if(nivel==='alta') base+=15;
+
+ if(modo==='hs') base+=15;
+ if(modo==='safe') base-=10;
+ if(modo==='rush') base+=10;
+ if(modo==='precisao') base+=5;
+
+ let bot=20;
+ if(botao==='pequeno') bot=r(10,40);
+ if(botao==='medio') bot=r(40,60);
+ if(botao==='grande') bot=r(55,65);
+
+ let dpi=r(420,560);
+
+ document.getElementById('resultado').innerHTML=`
+ 🎯 GERADOR INTELIGENTE<br><br>
+ Sistema: ${sistema}<br>
+ Dispositivo: ${celular}<br>
+ Modo: ${modo}<br>
+ Nível: ${nivel}<br><br>
+ DPI: ${dpi}<br>
+ Botão: ${bot}%<br><br>
+ Geral: ${base}<br>
+ Red: ${base-6}<br>
+ 2x: ${base-12}<br>
+ 4x: ${base-18}<br>
+ AWM: ${base-25}<br>
+ Olho: ${base-40}
+ `;
+}
+
+function vip(){
+ const p=document.getElementById('passVip').value.trim();
+ if(p!=='WEARD'){alert('Senha VIP incorreta');return;}
+
+ let base=r(165,180);
+
+ document.getElementById('resultado').innerHTML=`
+ 👑 GERADOR VIP FULL HS<br><br>
+ DPI: ${r(480,600)}<br>
+ Botão: ${r(50,65)}%<br><br>
+ Geral: ${base}<br>
+ Red: ${base-5}<br>
+ 2x: ${base-10}<br>
+ 4x: ${base-15}<br>
+ AWM: ${base-22}<br>
+ Olho: ${base-35}<br><br>
+ Precisão: 98%+ HS
+ `;
+}
+</script></body>
+    </html>
